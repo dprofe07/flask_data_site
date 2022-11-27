@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title>Информация</title>
+    </head>
+
+    <body>
+        <h1>Информация</h1>
+        <textarea id="data">{{ data }}</textarea>
+        <br/>
+        <button onclick="send_data()">Сохранить</button>
+        <script lang="javascript">
+            async function send_data() {
+                let text_area = document.getElementById('data');
+                await (await fetch(`{{ url_for('send_data') }}?token={{ token }}&data=${text_area.value}`));
+            }
+        </script>
+
+    </body>
+</html>
