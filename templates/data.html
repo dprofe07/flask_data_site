@@ -15,10 +15,10 @@
         <small id="saved" style="color: green;">Сохранено</small>
 
         <script lang="javascript">
-            async function send_data(need_reload=true) {
-                let saved = document.getElementById("saved");
-                saved.innerText = "Сохранено";
-                saved.style.color = "green";
+            let uptodate = true;
+
+            async function send_data() {
+
 
                 let text_area = document.getElementById('data');
                 let text = text_area.value;
@@ -26,12 +26,16 @@
                     text = text.replace('\n', '!!!newline!!!');
                 }
                 await (await fetch(`{{ url_for('send_data') }}?token={{ token }}&data=${text}`));
-                if (need_reload) document.location.reload();
+                uptodate = true;
+                let saved = document.getElementById("saved");
+                saved.innerText = "Сохранено";
+                saved.style.color = "green";
             }
 
             document.getElementById("data").addEventListener(
                 "input",
                 ev => {
+                    uptodate = false;
                     let saved = document.getElementById("saved");
                     saved.innerText = "Не сохранено";
                     saved.style.color = "red";
@@ -42,15 +46,19 @@
                 "keydown",
                 ev => {
                     if (ev.ctrlKey && (ev.key === "s" || ev.key === "ы")) {
+                        uptodate = true;
                         ev.preventDefault();
-                        send_data(false);
+                        send_data();
                     }
                 }
             )
 
             window.onbeforeunload = ev => {
-                ev.cancelBubble = false;
-                send_data(false);
+                if (!uptodate) {
+                    ev.cancelBubble = true;
+                    ev.preventDefault();
+                    ev.stopPropagation();
+                }
             }
         </script>
 
