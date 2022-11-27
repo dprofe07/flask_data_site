@@ -7,17 +7,50 @@
 
     <body>
         <h1>Информация</h1>
+        <a href="{{ url_for('index') }}">На главную</a>
+        <br/>
         <textarea id="data" cols="100" rows="30">{{ data }}</textarea>
         <br/>
         <button onclick="send_data()">Сохранить</button>
+        <small id="saved" style="color: green;">Сохранено</small>
+
         <script lang="javascript">
-            async function send_data() {
+            async function send_data(need_reload=true) {
+                let saved = document.getElementById("saved");
+                saved.innerText = "Сохранено";
+                saved.style.color = "green";
+
                 let text_area = document.getElementById('data');
                 let text = text_area.value;
                 while (text.includes('\n')) {
                     text = text.replace('\n', '!!!newline!!!');
                 }
-                document.location.href = `{{ url_for('send_data') }}?token={{ token }}&data=${text}`;
+                await (await fetch(`{{ url_for('send_data') }}?token={{ token }}&data=${text}`));
+                if (need_reload) document.location.reload();
+            }
+
+            document.getElementById("data").addEventListener(
+                "input",
+                ev => {
+                    let saved = document.getElementById("saved");
+                    saved.innerText = "Не сохранено";
+                    saved.style.color = "red";
+                }
+            )
+
+            document.getElementById("data").addEventListener(
+                "keydown",
+                ev => {
+                    if (ev.ctrlKey && (ev.key === "s" || ev.key === "ы")) {
+                        ev.preventDefault();
+                        send_data(false);
+                    }
+                }
+            )
+
+            window.onbeforeunload = ev => {
+                ev.cancelBubble = false;
+                send_data(false);
             }
         </script>
 

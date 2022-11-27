@@ -14,6 +14,11 @@ def create_table():
     db_conn.commit()
 
 
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+
 @app.route('/new/<token>')
 def new_token(token):
     create_table()

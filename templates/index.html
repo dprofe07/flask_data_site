@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title>Информация</title>
+    </head>
+
+    <body>
+        <h1>Главная страница</h1>
+
+        <p>
+            Здравствуйте! Вы находитесь на главной странице самого простого информационного хранилища.
+            Чтобы получить доступ к своей информации используется ключ доступа. Внимание! Если кто-то введёт ваш ключ доступа
+            он получит возможность работать с вашей информацией. Придумывайте сложный ключ!
+        </p>
+
+        <input type="text" id="key" autofocus/>
+        <button onclick="go()">></button>
+
+        <script lang="javascript">
+            function go() {
+                document.location.href = `${document.getElementById("key").value}`
+            }
+
+            document.getElementById("key").addEventListener(
+                "keydown",
+                ev => {
+                    if (ev.key === 'Enter') go();
+                }
+            )
+
+        </script>
+    </body>
+</html>
