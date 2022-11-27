@@ -41,7 +41,7 @@ def get_data(token):
         return redirect(f'/new/{token}')
     data = f[0][1]
 
-    return render_template('data.html', data=data, token=token)
+    return render_template('data.html', data=data.replace('!!!newline!!!', '\n'), token=token)
 
 
 @app.route('/send-data')
@@ -57,7 +57,7 @@ def send_data():
     cur.execute(f'''UPDATE data SET Data = "{data.replace('"', '""')}" WHERE Token = "{token.replace('"', '""')}"''')
     db_conn.commit()
 
-    return ''
+    return redirect(f'/{token}')
 
 
 if __name__ == '__main__':

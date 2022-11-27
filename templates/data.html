@@ -7,13 +7,17 @@
 
     <body>
         <h1>Информация</h1>
-        <textarea id="data">{{ data }}</textarea>
+        <textarea id="data" cols="100" rows="30">{{ data }}</textarea>
         <br/>
         <button onclick="send_data()">Сохранить</button>
         <script lang="javascript">
             async function send_data() {
                 let text_area = document.getElementById('data');
-                await (await fetch(`{{ url_for('send_data') }}?token={{ token }}&data=${text_area.value}`));
+                let text = text_area.value;
+                while (text.includes('\n')) {
+                    text = text.replace('\n', '!!!newline!!!');
+                }
+                document.location.href = `{{ url_for('send_data') }}?token={{ token }}&data=${text}`;
             }
         </script>
 
