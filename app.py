@@ -27,21 +27,6 @@ def index():
     return render_template('index.html')
 
 
-@app.route(f'{prefix}/new/<token>')
-def new_token(token):
-    create_table()
-    db_conn = sqlite3.connect(DATABASE)
-    cur = db_conn.cursor()
-
-    cur.execute(f'''SELECT * FROM data WHERE Token = "{token.replace('"', '""')}"''')
-
-    if not cur.fetchall():
-        cur.execute(f'''INSERT INTO data VALUES ("{token.replace('"', '""')}", "")''')
-        db_conn.commit()
-
-    return redirect(url_for('get_data', token=token))
-
-
 @app.route(f'{prefix}/<token>')
 def get_data(token):
     create_table()
@@ -51,7 +36,10 @@ def get_data(token):
     cur.execute(f'''SELECT * FROM data WHERE Token = "{token.replace('"', '""')}"''')
     f = cur.fetchall()
     if not f:
-        return redirect(f'/new/{token}')
+        cur.execute(f'''INSERT INTO data VALUES ("{token.replace('"', '""')}", "")''')
+        db_conn.commit()
+        cur.execute(f'''SELECT * FROM data WHERE Token = "{token.replace('"', '""')}"''')
+        f = cur.fetchall()
     data = f[0][1]
 
     return render_template('data.html', data=data.replace('!!!newline!!!', '\n'), token=token)
